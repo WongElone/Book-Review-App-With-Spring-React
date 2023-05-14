@@ -12,18 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("api/v1/books")
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
     @PostMapping("/")
-    public ResponseEntity<Book> addOne(@RequestBody @Valid BookRequest book) {
-        return new ResponseEntity<>(bookService.addOneBook(book), HttpStatus.CREATED);
+    public ResponseEntity<String> addOne(@RequestBody @Valid BookRequest book) {
+        bookService.addOneBook(book);
+        return new ResponseEntity<>("new book saved!", HttpStatus.CREATED);
     }
 
     @GetMapping("/")

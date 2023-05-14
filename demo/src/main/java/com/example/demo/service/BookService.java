@@ -24,35 +24,16 @@ public class BookService {
     private AuthorRepository authorRepository;
     @Autowired
     private BookDTOMapper bookDTOMapper;
-    public Book addOneBook(BookRequest bookRequest) {
-        System.out.println("book request: " + bookRequest);
-        // for each author in request body, find author by id from db or create new author
+    public void addOneBook(BookRequest bookRequest) {
         Book book = new Book(
                 bookRequest.title(),
                 bookRequest.description(),
-                bookRequest.authorIds().stream().map(authorId -> {
-                    // get author by id from db
-                    Optional<Author> authorEntity = authorRepository.findById(authorId);
-                    if (authorEntity.isPresent()) {
-                        return authorEntity.get();
-                    }
-                    // throw exception when author not found
-                    throw new BookServiceException("Author with given id " + authorId + " not found.");
-                }).collect(Collectors.toList()),
-                bookRequest.reviews());
-//        List<Author> authors = book.getAuthors().stream().map(author -> {
-//            Long authorId = author.getId();
-//
-//            if (authorId == null) return author;
-//
-//            Optional<Author> authorEntity = authorRepository.findById(authorId);
-//            if (authorEntity.isPresent()) {
-//                return authorEntity.get();
-//            }
-//            throw new IllegalStateException("Author with given id " + authorId + " not found.");
-//        }).collect(Collectors.toList());
-//        book.setAuthors(authors);
-        return bookRepository.save(book);
+                bookRequest.authorIds().stream().map(authorId -> authorRepository
+                            .findById(authorId)
+                            .orElseThrow(() -> new BookServiceException("Author with given id " + authorId + " not found."))
+                ).collect(Collectors.toList())
+        );
+        bookRepository.save(book);
     }
 
     public List<BookDTO> getAllBooks() {

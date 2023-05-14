@@ -50,11 +50,10 @@ public class Book {
 
     public Book() {}
 
-    public Book(String title, String description, List<Author> authors, List<Review> reviews) {
+    public Book(String title, String description, List<Author> authors) {
         this.title = title;
         this.description = description;
         this.authors = authors;
-        this.reviews = reviews;
     }
 
     public Long getId() {

@@ -34,11 +34,11 @@ public class Review {
     private String body;
 
     @NotNull
-    private int rating;
+    private Integer rating;
 
     public Review() {}
 
-    public Review(Book book, String title, String body, int rating) {
+    public Review(Book book, String title, String body, Integer rating) {
         this.book = book;
         this.title = title;
         this.body = body;
@@ -69,11 +69,11 @@ public class Review {
         this.title = title;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
