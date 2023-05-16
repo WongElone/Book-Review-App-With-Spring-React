@@ -1,13 +1,13 @@
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Lob;
+import jakarta.validation.constraints.*;
 
 public record ReviewRequest (
-        @NotBlank
+        @NotBlank @Size(min = 3, max = 255)
         String title,
-        @NotBlank
+        @NotBlank @Lob
         String body,
-        @NotNull
+        @NotNull @Min(1) @Max(5)
         Integer rating
 ) {}

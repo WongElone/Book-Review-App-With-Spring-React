@@ -1,10 +1,10 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +20,8 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 3, max = 255)
     private String fullName;
 
     @ManyToMany(
@@ -37,7 +38,6 @@ public class Author {
             joinColumns = @JoinColumn(name = "author_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
-//    @JsonManagedReference
     private List<Book> books;
 
     // TODO author image

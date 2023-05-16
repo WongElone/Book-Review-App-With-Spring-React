@@ -2,7 +2,7 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.util.Objects;
 
@@ -24,16 +24,19 @@ public class Review {
                     CascadeType.REFRESH,
             }) // optional element is set to false for non-null relationship.
     @JoinColumn(nullable = false) // nullable = false tell Hibernate the relationship is required
-    @JsonIgnore // is used to ignore the logical property used in serialization and deserialization.
     private Book book;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 3, max = 255)
     private String title;
 
-    @NotNull
+    @NotBlank
+    @Lob
     private String body;
 
     @NotNull
+    @Max(5)
+    @Min(1)
     private Integer rating;
 
     public Review() {}

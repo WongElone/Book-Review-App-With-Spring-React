@@ -11,6 +11,7 @@ import com.example.demo.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,9 +26,10 @@ public class AuthorService {
     @Autowired
     private BookRepository bookRepository;
     public AuthorDTO saveAuthor(AuthorRequest authorRequest) {
+        List<Long> bookIds = (authorRequest.bookIds() != null) ? authorRequest.bookIds() : new ArrayList<>();
         Author author = new Author(
                 authorRequest.fullName(),
-                authorRequest.bookIds().stream()
+                bookIds.stream()
                         .map(bookId -> bookRepository
                                 .findById(bookId)
                                 .orElseThrow(() -> new AuthorService404Exception("Book with given Id " + bookId + " not found."))
@@ -52,8 +54,10 @@ public class AuthorService {
         Author author = authorRepository
                 .findById(authorId)
                 .orElseThrow(() -> new AuthorService404Exception("Author with give id " + authorId + " not found."));
+
         author.setFullName(authorRequest.fullName());
-        author.setBooks(authorRequest.bookIds().stream()
+        List<Long> bookIds = (authorRequest.bookIds() != null) ? authorRequest.bookIds() : new ArrayList<>();
+        author.setBooks(bookIds.stream()
                 .map(bookId -> bookRepository
                         .findById(bookId)
                         .orElseThrow(() -> new AuthorService404Exception("Book with given Id " + bookId + " not found.")))

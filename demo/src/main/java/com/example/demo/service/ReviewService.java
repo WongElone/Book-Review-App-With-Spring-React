@@ -72,19 +72,6 @@ public class ReviewService {
         return reviewDTOMapper.apply(reviewRepository.save(review));
     }
 
-    public ReviewDTO updateOneReview(Long bookId, Long reviewId, ReviewRequest reviewRequest) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ReviewService404Exception("Book with given Id " + bookId + " not found."));
-        Review review = book.getReviews().stream()
-                .filter(r -> Objects.equals(r.getId(), reviewId))
-                .findFirst()
-                .orElseThrow(() -> new ReviewService404Exception("Review with given Id " + reviewId + " not found in book with Id " + bookId + "."));
-        review.setTitle(reviewRequest.title());
-        review.setBody(reviewRequest.body());
-        review.setRating(reviewRequest.rating());
-        return reviewDTOMapper.apply(reviewRepository.save(review));
-    }
-
     public void deleteOneReview(Long reviewId) {
         reviewRepository.deleteById(reviewId);
     }
