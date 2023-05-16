@@ -31,8 +31,20 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookDTO> getAllBooks() {
-        return bookService.getAllBooks();
+    public List<BookDTO> getAllBooks(@RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer size,
+                                     @RequestParam(required = false) String sort,
+                                     @RequestParam(defaultValue = "false") Boolean desc) {
+        if (page == null || size == null) {
+            if (sort == null) {
+                return bookService.getAllBooks();
+            } else {
+                return bookService.getAllBooks(sort, desc);
+            }
+        } else if (sort == null) {
+            return bookService.getAllBooks(page, size);
+        }
+        return bookService.getAllBooks(page, size, sort, desc);
     }
 
     @GetMapping("/{id}")
@@ -59,8 +71,12 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/reviews")
-    public List<ReviewDTO> getAllReviewsOfBook(@PathVariable Long bookId) {
-        return reviewService.getAllReviews(bookId);
+    public List<ReviewDTO> getAllReviewsOfBook(@PathVariable Long bookId,
+                                               @RequestParam(required = false) Integer page,
+                                               @RequestParam(required = false) Integer size,
+                                               @RequestParam(required = false) String sort,
+                                               @RequestParam(defaultValue = "false") Boolean desc) {
+        return reviewService.getAllReviews(bookId, page, size, sort, desc);
     }
 
     @GetMapping("/{bookId}/reviews/{reviewId}")

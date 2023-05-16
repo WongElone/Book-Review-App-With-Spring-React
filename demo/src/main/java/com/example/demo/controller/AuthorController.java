@@ -25,8 +25,20 @@ public class AuthorController {
     }
 
     @GetMapping
-    public List<AuthorDTO> getAllAuthors() {
-        return authorService.getAllAuthors();
+    public List<AuthorDTO> getAllAuthors(@RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size,
+                                         @RequestParam(required = false) String sort,
+                                         @RequestParam(defaultValue = "false") Boolean desc) {
+        if (page == null || size == null) {
+            if (sort == null) {
+                return authorService.getAllAuthors();
+            } else {
+                return authorService.getAllAuthors(sort, desc);
+            }
+        } else if (sort == null) {
+            return authorService.getAllAuthors(page, size);
+        }
+        return authorService.getAllAuthors(page, size, sort, desc);
     }
 
     @GetMapping("/{id}")

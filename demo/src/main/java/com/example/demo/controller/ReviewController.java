@@ -20,8 +20,11 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping
-    public List<ReviewDTO> getAllReviews() {
-        return reviewService.getAllReviews();
+    public List<ReviewDTO> getAllReviews(@RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size,
+                                         @RequestParam(required = false) String sort,
+                                         @RequestParam(defaultValue = "false") Boolean desc) {
+        return reviewService.getAllReviews(page, size, sort, desc);
     }
 
     @GetMapping("/{reviewId}")

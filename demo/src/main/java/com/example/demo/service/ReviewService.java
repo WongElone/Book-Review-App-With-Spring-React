@@ -9,6 +9,9 @@ import com.example.demo.model.Review;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,16 +40,44 @@ public class ReviewService {
         return reviewDTOMapper.apply(reviewRepository.save(review));
     }
 
-    public List<ReviewDTO> getAllReviews() {
-        return reviewRepository.findAll().stream().map(reviewDTOMapper).collect(Collectors.toList());
+    public List<ReviewDTO> getAllReviews(Integer page, Integer size, String sort, Boolean desc) {
+        List<Review> reviews;
+        if (page == null || size == null) {
+            if (sort == null) {
+                reviews = reviewRepository.findAll();
+            } else {
+                reviews = reviewRepository.findAll(
+                        Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort)
+                );
+            }
+        } else {
+            Pageable pageable = (sort == null)
+                    ? PageRequest.of(page, size)
+                    : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+            reviews = reviewRepository.findAll(pageable).toList();
+        }
+        return reviews.stream().map(reviewDTOMapper).toList();
     }
 
-    public List<ReviewDTO> getAllReviews(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new ReviewService404Exception("Book with given Id " + bookId + " not found."));
-        return book.getReviews()
-                .stream()
-                .map(reviewDTOMapper)
-                .toList();
+    public List<ReviewDTO> getAllReviews(Long bookId, Integer page, Integer size, String sort, Boolean desc) {
+        if (!bookRepository.existsById(bookId)) throw new ReviewService404Exception("Book with given Id " + bookId + " not found.");
+
+        List<Review> reviews;
+        if (page == null || size == null) {
+            if (sort == null) {
+                reviews = reviewRepository.findReviewsByBookId(bookId);
+            } else {
+                reviews = reviewRepository.findReviewsByBookId(bookId,
+                        Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort)
+                );
+            }
+        } else {
+            Pageable pageable = (sort == null)
+                    ? PageRequest.of(page, size)
+                    : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+            reviews = reviewRepository.findReviewsByBookId(bookId, pageable).toList();
+        }
+        return reviews.stream().map(reviewDTOMapper).toList();
     }
 
     public ReviewDTO getOneReview(Long reviewId) {

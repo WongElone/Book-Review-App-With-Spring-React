@@ -3,6 +3,7 @@ package com.example.demo.advice;
 import com.example.demo.exception.AuthorService404Exception;
 import com.example.demo.exception.BookService404Exception;
 import com.example.demo.exception.ReviewService404Exception;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -28,9 +29,18 @@ public class ApplicationExceptionHandler {
         });
         return errorMap;
     }
+
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Map<String, String> hmnreHandler(HttpMessageNotReadableException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PropertyReferenceException.class)
+    public Map<String, String> preHandler(PropertyReferenceException ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage());
         return errorMap;
@@ -69,21 +79,21 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public Map<String, List<String>> handleGeneralExceptions(Exception ex) {
-        Map<String, List<String>> errorMap = new HashMap<>();
-        List<String> errors = Collections.singletonList(ex.getMessage());
-        errorMap.put("errorMessages", errors);
-        return errorMap;
-    }
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public Map<String, List<String>> handleRuntimeExceptions(RuntimeException ex) {
-        Map<String, List<String>> errorMap = new HashMap<>();
-        List<String> errors = Collections.singletonList(ex.getMessage());
-        errorMap.put("errorMessages", errors);
-        return errorMap;
-    }
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler(Exception.class)
+//    public Map<String, List<String>> handleGeneralExceptions(Exception ex) {
+//        Map<String, List<String>> errorMap = new HashMap<>();
+//        List<String> errors = Collections.singletonList(ex.getMessage());
+//        errorMap.put("errorMessages", errors);
+//        return errorMap;
+//    }
+//
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler(RuntimeException.class)
+//    public Map<String, List<String>> handleRuntimeExceptions(RuntimeException ex) {
+//        Map<String, List<String>> errorMap = new HashMap<>();
+//        List<String> errors = Collections.singletonList(ex.getMessage());
+//        errorMap.put("errorMessages", errors);
+//        return errorMap;
+//    }
 }

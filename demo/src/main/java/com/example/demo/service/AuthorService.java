@@ -9,6 +9,9 @@ import com.example.demo.model.Book;
 import com.example.demo.repository.AuthorRepository;
 import com.example.demo.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +44,22 @@ public class AuthorService {
 
     public List<AuthorDTO> getAllAuthors() {
         return authorRepository.findAll().stream().map(authorDTOMapper).toList();
+    }
+
+    public List<AuthorDTO> getAllAuthors(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return authorRepository.findAll(pageable).stream().map(authorDTOMapper).toList();
+    }
+
+    public List<AuthorDTO> getAllAuthors(String sort, Boolean desc) {
+        Sort sortable = Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
+        return authorRepository.findAll(sortable).stream().map(authorDTOMapper).toList();
+    }
+
+    public List<AuthorDTO> getAllAuthors(Integer page, Integer size, String sort, Boolean desc) {
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+        return authorRepository.findAll(pageable).stream().map(authorDTOMapper).toList();
     }
 
     public AuthorDTO getOneAuthor(Long authorId) {
