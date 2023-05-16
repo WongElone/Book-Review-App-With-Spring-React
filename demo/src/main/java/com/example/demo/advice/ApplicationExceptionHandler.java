@@ -1,10 +1,11 @@
 package com.example.demo.advice;
 
 import com.example.demo.exception.AuthorService404Exception;
-import com.example.demo.exception.BookServiceException;
+import com.example.demo.exception.BookService404Exception;
 import com.example.demo.exception.ReviewService404Exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,15 +36,15 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BookServiceException.class)
-    public Map<String, String> bookServiceExceptionHandler(BookServiceException ex) {
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookService404Exception.class)
+    public Map<String, String> bookServiceExceptionHandler(BookService404Exception ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage());
         return errorMap;
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(AuthorService404Exception.class)
     public Map<String, String> authorService404ExceptionHandler(AuthorService404Exception ex) {
         Map<String, String> errorMap = new HashMap<>();
@@ -51,11 +52,20 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(ReviewService404Exception.class)
     public Map<String, String> reviewService404ExceptionHandler(ReviewService404Exception ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(value = HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Map<String, List<String>> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        Map<String, List<String>> errorMap = new HashMap<>();
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        errorMap.put("errorMessages", errors);
         return errorMap;
     }
 

@@ -3,7 +3,8 @@ package com.example.demo.service;
 import com.example.demo.dto.BookDTO;
 import com.example.demo.dto.BookDTOMapper;
 import com.example.demo.dto.BookRequest;
-import com.example.demo.exception.BookServiceException;
+import com.example.demo.exception.AuthorService404Exception;
+import com.example.demo.exception.BookService404Exception;
 import com.example.demo.model.Author;
 import com.example.demo.model.Book;
 import com.example.demo.repository.AuthorRepository;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -24,56 +23,44 @@ public class BookService {
     private AuthorRepository authorRepository;
     @Autowired
     private BookDTOMapper bookDTOMapper;
-    public void addOneBook(BookRequest bookRequest) {
+    public BookDTO addOneBook(BookRequest bookRequest) {
         Book book = new Book(
                 bookRequest.title(),
                 bookRequest.description(),
                 bookRequest.authorIds().stream().map(authorId -> authorRepository
                             .findById(authorId)
-                            .orElseThrow(() -> new BookServiceException("Author with given id " + authorId + " not found."))
-                ).collect(Collectors.toList())
+                            .orElseThrow(() -> new BookService404Exception("Author with given id " + authorId + " not found."))
+                ).toList()
         );
-        bookRepository.save(book);
+        return bookDTOMapper.apply(bookRepository.save(book));
     }
 
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll()
                 .stream()
                 .map(bookDTOMapper)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public BookDTO getOneBook(Long bookId) throws BookServiceException {
+    public BookDTO getOneBook(Long bookId) throws BookService404Exception {
         return bookRepository.findById(bookId)
                 .map(bookDTOMapper)
-                .orElseThrow(() -> new BookServiceException("Book with given id " + bookId + " not found."));
+                .orElseThrow(() -> new BookService404Exception("Book with given id " + bookId + " not found."));
     }
 
-    public Book updateOneBook(Long bookId, Book newBook) {
-        return bookRepository.findById(bookId)
-                .map((book) -> {
-                    List<Author> authors = newBook.getAuthors();
+    public BookDTO updateOneBook(Long bookId, BookRequest bookRequest) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookService404Exception("Book with given id " + bookId + " not found."));
 
-                    List<Author> newAuthors = authors.stream().map(author -> {
-                        Long authorId = author.getId();
+        List<Author> authors = bookRequest.authorIds().stream().map(authorId -> {
+            return authorRepository.findById(authorId)
+                    .orElseThrow(() -> new AuthorService404Exception("Author with given id " + authorId + " not found."));
+        }).toList();
 
-                        if (authorId == null) return author;
-
-                        Optional<Author> authorEntity = authorRepository.findById(authorId);
-                        if (authorEntity.isPresent()) {
-                            return authorEntity.get();
-                        }
-                        throw new IllegalStateException("Author with given id " + authorId + " not found.");
-                    }).collect(Collectors.toList());
-                    book.setAuthors(newAuthors);
-
-                    book.setTitle(newBook.getTitle());
-                    book.setDescription(newBook.getDescription());
-                    book.setReviews(newBook.getReviews());
-                    return bookRepository.save(book);
-                })
-                .orElseThrow(() -> new IllegalStateException("student with id " + bookId + " does not exist"));
-
+        book.setTitle(bookRequest.title());
+        book.setDescription(bookRequest.description());
+        book.setAuthors(authors);
+        return bookDTOMapper.apply(bookRepository.save(book));
     }
 
     public void deleteOneBook(Long bookId) {

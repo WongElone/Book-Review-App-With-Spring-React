@@ -2,9 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BookDTO;
 import com.example.demo.dto.BookRequest;
-import com.example.demo.exception.BookServiceException;
-import com.example.demo.model.Book;
+import com.example.demo.dto.ReviewDTO;
+import com.example.demo.dto.ReviewRequest;
+import com.example.demo.exception.BookService404Exception;
 import com.example.demo.service.BookService;
+import com.example.demo.service.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,31 +21,51 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+    @Autowired
+    private ReviewService reviewService;
 
-    @PostMapping("/")
-    public ResponseEntity<String> addOne(@RequestBody @Valid BookRequest book) {
-        bookService.addOneBook(book);
-        return new ResponseEntity<>("new book saved!", HttpStatus.CREATED);
+    // books
+    @PostMapping
+    public ResponseEntity<BookDTO> addOne(@RequestBody @Valid BookRequest book) {
+        return new ResponseEntity<>(bookService.addOneBook(book), HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
-    public List<BookDTO> getAll() {
+    @GetMapping
+    public List<BookDTO> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public BookDTO getOne(@PathVariable Long id) throws BookServiceException {
+    public BookDTO getOneBook(@PathVariable Long id) throws BookService404Exception {
         return bookService.getOneBook(id);
     }
 
     @PutMapping("/{id}")
-    public Book updateOne(@PathVariable Long id, @RequestBody Book book) {
-        return bookService.updateOneBook(id, book);
+    public BookDTO updateOneBook(@PathVariable Long id, @RequestBody @Valid BookRequest bookRequest) {
+        return bookService.updateOneBook(id, bookRequest);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteOne(@PathVariable Long id) {
+    public void deleteOneBook(@PathVariable Long id) {
         bookService.deleteOneBook(id);
     }
+    // end of books
+
+    // reviews of books
+    @PostMapping("/{bookId}/reviews")
+    public ResponseEntity<ReviewDTO> addOneReviewToBook(@RequestBody @Valid ReviewRequest reviewRequest, @PathVariable Long bookId) {
+        return new ResponseEntity<>(reviewService.addOneReview(reviewRequest, bookId), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{bookId}/reviews")
+    public List<ReviewDTO> getAllReviewsOfBook(@PathVariable Long bookId) {
+        return reviewService.getAllReviews(bookId);
+    }
+
+    @GetMapping("/{bookId}/reviews/{reviewId}")
+    public ReviewDTO getOneReviewOfBook(@PathVariable Long bookId, @PathVariable Long reviewId) {
+        return reviewService.getOneReview(bookId, reviewId);
+    }
+    // end of reviews of books
 }

@@ -13,26 +13,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/books/{bookId}/reviews")
+@RequestMapping("/api/v1/reviews")
 public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
 
-    @PostMapping("/")
-    public ResponseEntity<String> addOne(@RequestBody @Valid ReviewRequest reviewRequest, @PathVariable Long bookId) {
-        reviewService.addOneReview(reviewRequest, bookId);
-        return new ResponseEntity<>("new review added!", HttpStatus.CREATED);
-    }
-
-    @GetMapping("/")
-    public List<ReviewDTO> getAll(@PathVariable Long bookId) {
-        return reviewService.getAllReviews(bookId);
+    @GetMapping
+    public List<ReviewDTO> getAllReviews() {
+        return reviewService.getAllReviews();
     }
 
     @GetMapping("/{reviewId}")
-    public ReviewDTO getOne(@PathVariable Long bookId, @PathVariable Long reviewId) {
-        return reviewService.getOneReview(bookId, reviewId);
+    public ReviewDTO getOneReview(@PathVariable Long reviewId) {
+        return reviewService.getOneReview(reviewId);
     }
 
+    @PutMapping("/{reviewId}")
+    public ReviewDTO updateOneReview(@PathVariable Long reviewId, @RequestBody @Valid ReviewRequest reviewRequest) {
+        return reviewService.updateOneReview(reviewId, reviewRequest);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOne(@PathVariable Long reviewId) {
+        reviewService.deleteOneReview(reviewId);
+    }
 }

@@ -19,19 +19,29 @@ public class AuthorController {
     @Autowired
     private AuthorService authorService;
 
-    @PostMapping("/")
-    public ResponseEntity<String> add(@RequestBody @Valid AuthorRequest authorRequest) {
-        authorService.saveAuthor(authorRequest);
-        return new ResponseEntity<>("new author saved!", HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<AuthorDTO> addOneAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
+        return new ResponseEntity<>(authorService.saveAuthor(authorRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/")
-    public List<AuthorDTO> getAll() {
+    @GetMapping
+    public List<AuthorDTO> getAllAuthors() {
         return authorService.getAllAuthors();
     }
 
     @GetMapping("/{id}")
-    public AuthorDTO getOne(@PathVariable Long id) {
+    public AuthorDTO getOneAuthor(@PathVariable Long id) {
         return authorService.getOneAuthor(id);
+    }
+
+    @PutMapping("/{id}")
+    public AuthorDTO updateOneAuthor(@PathVariable Long id, @RequestBody @Valid AuthorRequest authorRequest) {
+        return authorService.updateOneAuthor(id, authorRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOneAuthor(@PathVariable Long id) {
+        authorService.deleteOneAuthor(id);
     }
 }

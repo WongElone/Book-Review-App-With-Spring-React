@@ -24,7 +24,7 @@ public class AuthorService {
     private AuthorDTOMapper authorDTOMapper;
     @Autowired
     private BookRepository bookRepository;
-    public void saveAuthor(AuthorRequest authorRequest) {
+    public AuthorDTO saveAuthor(AuthorRequest authorRequest) {
         Author author = new Author(
                 authorRequest.fullName(),
                 authorRequest.bookIds().stream()
@@ -32,13 +32,13 @@ public class AuthorService {
                                 .findById(bookId)
                                 .orElseThrow(() -> new AuthorService404Exception("Book with given Id " + bookId + " not found."))
                         )
-                        .collect(Collectors.toList())
+                        .toList()
         );
-        authorRepository.save(author);
+        return authorDTOMapper.apply(authorRepository.save(author));
     }
 
     public List<AuthorDTO> getAllAuthors() {
-        return authorRepository.findAll().stream().map(authorDTOMapper).collect(Collectors.toList());
+        return authorRepository.findAll().stream().map(authorDTOMapper).toList();
     }
 
     public AuthorDTO getOneAuthor(Long authorId) {
@@ -46,5 +46,24 @@ public class AuthorService {
                 .findById(authorId)
                 .map(authorDTOMapper)
                 .orElseThrow(() -> new AuthorService404Exception("Author with give id " + authorId + " not found."));
+    }
+
+    public AuthorDTO updateOneAuthor(Long authorId, AuthorRequest authorRequest) {
+        Author author = authorRepository
+                .findById(authorId)
+                .orElseThrow(() -> new AuthorService404Exception("Author with give id " + authorId + " not found."));
+        author.setFullName(authorRequest.fullName());
+        author.setBooks(authorRequest.bookIds().stream()
+                .map(bookId -> bookRepository
+                        .findById(bookId)
+                        .orElseThrow(() -> new AuthorService404Exception("Book with given Id " + bookId + " not found.")))
+                .toList()
+        );
+        return authorDTOMapper.apply(authorRepository.save(author));
+    }
+
+    public void deleteOneAuthor(Long authorId) {
+        authorRepository.findById(authorId).orElseThrow(() -> new AuthorService404Exception("Author with give id " + authorId + " not found."));
+        authorRepository.deleteById(authorId);
     }
 }
