@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -79,13 +80,13 @@ public class BookService {
 
     public BookDTO updateOneBook(Long bookId, BookRequest bookRequest) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookService404Exception("Book with given id " + bookId + " not found."))
-                ;
-        List<Long> authorIds = (bookRequest.authorIds() != null) ? bookRequest.authorIds() : new ArrayList<>();
-        List<Author> authors = authorIds.stream().map(authorId -> {
-            return authorRepository.findById(authorId)
-                    .orElseThrow(() -> new AuthorService404Exception("Author with given id " + authorId + " not found."));
-        }).toList();
+                .orElseThrow(() -> new BookService404Exception("Book with given id " + bookId + " not found."));
+
+        List<Author> authors = (bookRequest.authorIds() == null || bookRequest.authorIds().isEmpty())
+            ? new ArrayList<>()
+            : bookRequest.authorIds().stream().map(authorId -> authorRepository.findById(authorId)
+                .orElseThrow(() -> new AuthorService404Exception("Author with given id " + authorId + " not found."))
+            ).collect(Collectors.toList());
 
         book.setTitle(bookRequest.title());
         book.setDescription(bookRequest.description());

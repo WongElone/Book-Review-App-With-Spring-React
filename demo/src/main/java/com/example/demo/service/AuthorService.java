@@ -75,13 +75,14 @@ public class AuthorService {
                 .orElseThrow(() -> new AuthorService404Exception("Author with give id " + authorId + " not found."));
 
         author.setFullName(authorRequest.fullName());
-        List<Long> bookIds = (authorRequest.bookIds() != null) ? authorRequest.bookIds() : new ArrayList<>();
-        author.setBooks(bookIds.stream()
-                .map(bookId -> bookRepository
+        List<Book> books = (authorRequest.bookIds() == null || authorRequest.bookIds().isEmpty())
+                ? new ArrayList<>()
+                : authorRequest.bookIds().stream()
+                    .map(bookId -> bookRepository
                         .findById(bookId)
                         .orElseThrow(() -> new AuthorService404Exception("Book with given Id " + bookId + " not found.")))
-                .toList()
-        );
+                    .toList();
+        author.setBooks(books);
         return authorDTOMapper.apply(authorRepository.save(author));
     }
 

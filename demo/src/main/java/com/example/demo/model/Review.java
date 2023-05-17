@@ -3,13 +3,16 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.Objects;
 
 
 @Entity
 @Table
-public class Review {
+public class Review extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +41,10 @@ public class Review {
     @Max(5)
     @Min(1)
     private Integer rating;
+
+//    @CreatedDate
+//    @Column(updatable = false)
+//    private Instant createdAt;
 
     public Review() {}
 
@@ -93,7 +100,7 @@ public class Review {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Review review = (Review) o;
-        return rating == review.rating && Objects.equals(Id, review.Id) && Objects.equals(book, review.book) && Objects.equals(title, review.title) && Objects.equals(body, review.body);
+        return Objects.equals(Id, review.Id) && Objects.equals(book, review.book) && Objects.equals(title, review.title) && Objects.equals(body, review.body) && Objects.equals(rating, review.rating);
     }
 
     @Override

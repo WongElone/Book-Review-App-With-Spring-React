@@ -14,7 +14,8 @@ public class ReviewDTOMapper implements Function<Review, ReviewDTO> {
                 new SimpleBook(review.getBook().getId(), review.getBook().getTitle()),
                 review.getTitle(),
                 review.getBody(),
-                review.getRating()
+                review.getRating(),
+                review.getCreatedDate()
         );
     }
 }
