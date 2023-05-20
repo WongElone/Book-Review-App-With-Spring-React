@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class ReviewDTOMapper implements Function<Review, ReviewDTO> {
+public class ReviewResponseMapper implements Function<Review, ReviewResponse> {
     @Override
-    public ReviewDTO apply(Review review) {
-        return new ReviewDTO(
+    public ReviewResponse apply(Review review) {
+        return new ReviewResponse(
                 review.getId(),
                 new SimpleBook(review.getBook().getId(), review.getBook().getTitle()),
                 review.getTitle(),
                 review.getBody(),
                 review.getRating(),
-                review.getCreatedDate()
+                review.getCreatedAt()
         );
     }
 }

@@ -7,10 +7,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class AuthorDTOMapper implements Function<Author, AuthorDTO> {
+public class AuthorResponseMapper implements Function<Author, AuthorResponse> {
     @Override
-    public AuthorDTO apply(Author author) {
-        return new AuthorDTO(
+    public AuthorResponse apply(Author author) {
+        return new AuthorResponse(
                 author.getId(),
                 author.getFullName(),
                 author.getBooks().stream().map(book -> new SimpleBook(

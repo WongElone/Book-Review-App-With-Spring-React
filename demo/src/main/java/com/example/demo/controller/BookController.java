@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.BookDTO;
+import com.example.demo.dto.BookResponse;
 import com.example.demo.dto.BookRequest;
-import com.example.demo.dto.ReviewDTO;
+import com.example.demo.dto.ReviewResponse;
 import com.example.demo.dto.ReviewRequest;
 import com.example.demo.exception.BookService404Exception;
 import com.example.demo.service.BookService;
@@ -26,15 +26,15 @@ public class BookController {
 
     // books
     @PostMapping
-    public ResponseEntity<BookDTO> addOne(@RequestBody @Valid BookRequest book) {
+    public ResponseEntity<BookResponse> addOne(@RequestBody @Valid BookRequest book) {
         return new ResponseEntity<>(bookService.addOneBook(book), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<BookDTO> getAllBooks(@RequestParam(required = false) Integer page,
-                                     @RequestParam(required = false) Integer size,
-                                     @RequestParam(required = false) String sort,
-                                     @RequestParam(defaultValue = "false") Boolean desc) {
+    public List<BookResponse> getAllBooks(@RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer size,
+                                          @RequestParam(required = false) String sort,
+                                          @RequestParam(defaultValue = "false") Boolean desc) {
         if (page == null || size == null) {
             if (sort == null) {
                 return bookService.getAllBooks();
@@ -48,12 +48,12 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookDTO getOneBook(@PathVariable Long id) throws BookService404Exception {
+    public BookResponse getOneBook(@PathVariable Long id) throws BookService404Exception {
         return bookService.getOneBook(id);
     }
 
     @PutMapping("/{id}")
-    public BookDTO updateOneBook(@PathVariable Long id, @RequestBody @Valid BookRequest bookRequest) {
+    public BookResponse updateOneBook(@PathVariable Long id, @RequestBody @Valid BookRequest bookRequest) {
         return bookService.updateOneBook(id, bookRequest);
     }
 
@@ -66,21 +66,21 @@ public class BookController {
 
     // reviews of books
     @PostMapping("/{bookId}/reviews")
-    public ResponseEntity<ReviewDTO> addOneReviewToBook(@RequestBody @Valid ReviewRequest reviewRequest, @PathVariable Long bookId) {
+    public ResponseEntity<ReviewResponse> addOneReviewToBook(@RequestBody @Valid ReviewRequest reviewRequest, @PathVariable Long bookId) {
         return new ResponseEntity<>(reviewService.addOneReview(reviewRequest, bookId), HttpStatus.CREATED);
     }
 
     @GetMapping("/{bookId}/reviews")
-    public List<ReviewDTO> getAllReviewsOfBook(@PathVariable Long bookId,
-                                               @RequestParam(required = false) Integer page,
-                                               @RequestParam(required = false) Integer size,
-                                               @RequestParam(required = false) String sort,
-                                               @RequestParam(defaultValue = "false") Boolean desc) {
+    public List<ReviewResponse> getAllReviewsOfBook(@PathVariable Long bookId,
+                                                    @RequestParam(required = false) Integer page,
+                                                    @RequestParam(required = false) Integer size,
+                                                    @RequestParam(required = false) String sort,
+                                                    @RequestParam(defaultValue = "false") Boolean desc) {
         return reviewService.getAllReviews(bookId, page, size, sort, desc);
     }
 
     @GetMapping("/{bookId}/reviews/{reviewId}")
-    public ReviewDTO getOneReviewOfBook(@PathVariable Long bookId, @PathVariable Long reviewId) {
+    public ReviewResponse getOneReviewOfBook(@PathVariable Long bookId, @PathVariable Long reviewId) {
         return reviewService.getOneReview(bookId, reviewId);
     }
     // end of reviews of books

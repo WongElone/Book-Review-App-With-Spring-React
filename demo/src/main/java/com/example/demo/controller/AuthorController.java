@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthorDTO;
 import com.example.demo.dto.AuthorRequest;
+import com.example.demo.dto.AuthorResponse;
 import com.example.demo.model.Author;
 import com.example.demo.service.AuthorService;
 import jakarta.validation.Valid;
@@ -20,12 +20,12 @@ public class AuthorController {
     private AuthorService authorService;
 
     @PostMapping
-    public ResponseEntity<AuthorDTO> addOneAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
+    public ResponseEntity<AuthorResponse> addOneAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
         return new ResponseEntity<>(authorService.saveAuthor(authorRequest), HttpStatus.OK);
     }
 
     @GetMapping
-    public List<AuthorDTO> getAllAuthors(@RequestParam(required = false) Integer page,
+    public List<AuthorResponse> getAllAuthors(@RequestParam(required = false) Integer page,
                                          @RequestParam(required = false) Integer size,
                                          @RequestParam(required = false) String sort,
                                          @RequestParam(defaultValue = "false") Boolean desc) {
@@ -42,12 +42,12 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public AuthorDTO getOneAuthor(@PathVariable Long id) {
+    public AuthorResponse getOneAuthor(@PathVariable Long id) {
         return authorService.getOneAuthor(id);
     }
 
     @PutMapping("/{id}")
-    public AuthorDTO updateOneAuthor(@PathVariable Long id, @RequestBody @Valid AuthorRequest authorRequest) {
+    public AuthorResponse updateOneAuthor(@PathVariable Long id, @RequestBody @Valid AuthorRequest authorRequest) {
         return authorService.updateOneAuthor(id, authorRequest);
     }
 

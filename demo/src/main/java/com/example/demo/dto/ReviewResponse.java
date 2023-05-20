@@ -3,7 +3,7 @@ package com.example.demo.dto;
 
 import java.time.Instant;
 
-public record ReviewDTO (
+public record ReviewResponse(
         Long Id,
         SimpleBook book,
         String title,

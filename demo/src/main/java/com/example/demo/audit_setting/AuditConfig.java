@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.audit_setting;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

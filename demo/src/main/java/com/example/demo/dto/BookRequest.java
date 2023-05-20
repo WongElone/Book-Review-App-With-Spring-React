@@ -12,5 +12,6 @@ public record BookRequest (
         @NotBlank @Size(max = 1000)
         String description,
         @JsonProperty("authors")
-        List<Long> authorIds
+        List<Long> authorIds,
+        String coverImageRelativeUri
 ) {}

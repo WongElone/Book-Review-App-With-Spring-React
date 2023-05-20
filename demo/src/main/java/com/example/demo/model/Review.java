@@ -1,18 +1,15 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.auditable.ReviewAuditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
 import java.util.Objects;
 
 
 @Entity
 @Table
-public class Review extends Auditable {
+public class Review extends ReviewAuditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +38,6 @@ public class Review extends Auditable {
     @Max(5)
     @Min(1)
     private Integer rating;
-
-//    @CreatedDate
-//    @Column(updatable = false)
-//    private Instant createdAt;
 
     public Review() {}
 

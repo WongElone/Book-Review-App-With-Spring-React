@@ -3,6 +3,8 @@ package com.example.demo.advice;
 import com.example.demo.exception.AuthorService404Exception;
 import com.example.demo.exception.BookService404Exception;
 import com.example.demo.exception.ReviewService404Exception;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,7 +13,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +81,30 @@ public class ApplicationExceptionHandler {
         Map<String, List<String>> errorMap = new HashMap<>();
         List<String> errors = Collections.singletonList(ex.getMessage());
         errorMap.put("errorMessages", errors);
+        return errorMap;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MultipartException.class)
+    public Map<String, String> handleMultipartException(MultipartException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public Map<String, String> handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage() + " Make sure it is a file.");
+        return errorMap;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, String> handleConstraintViolationException(ConstraintViolationException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage());
         return errorMap;
     }
 

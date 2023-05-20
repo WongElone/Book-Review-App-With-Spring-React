@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ReviewDTO;
-import com.example.demo.dto.ReviewDTOMapper;
+import com.example.demo.dto.ReviewResponse;
+import com.example.demo.dto.ReviewResponseMapper;
 import com.example.demo.dto.ReviewRequest;
 import com.example.demo.exception.ReviewService404Exception;
 import com.example.demo.model.Book;
@@ -26,9 +26,9 @@ public class ReviewService {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
-    private ReviewDTOMapper reviewDTOMapper;
+    private ReviewResponseMapper reviewResponseMapper;
 
-    public ReviewDTO addOneReview(ReviewRequest reviewRequest, Long bookId) {
+    public ReviewResponse addOneReview(ReviewRequest reviewRequest, Long bookId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ReviewService404Exception("Book with given Id " + bookId + " not found."));
         Review review = new Review(
@@ -37,10 +37,10 @@ public class ReviewService {
                 reviewRequest.body(),
                 reviewRequest.rating()
         );
-        return reviewDTOMapper.apply(reviewRepository.save(review));
+        return reviewResponseMapper.apply(reviewRepository.save(review));
     }
 
-    public List<ReviewDTO> getAllReviews(Integer page, Integer size, String sort, Boolean desc) {
+    public List<ReviewResponse> getAllReviews(Integer page, Integer size, String sort, Boolean desc) {
         List<Review> reviews;
         if (page == null || size == null) {
             if (sort == null) {
@@ -54,12 +54,12 @@ public class ReviewService {
             Pageable pageable = (sort == null)
                     ? PageRequest.of(page, size)
                     : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-            reviews = reviewRepository.findAll(pageable).toList();
+            reviews = reviewRepository.findAll(pageable).stream().collect(Collectors.toList());
         }
-        return reviews.stream().map(reviewDTOMapper).toList();
+        return reviews.stream().map(reviewResponseMapper).collect(Collectors.toList());
     }
 
-    public List<ReviewDTO> getAllReviews(Long bookId, Integer page, Integer size, String sort, Boolean desc) {
+    public List<ReviewResponse> getAllReviews(Long bookId, Integer page, Integer size, String sort, Boolean desc) {
         if (!bookRepository.existsById(bookId)) throw new ReviewService404Exception("Book with given Id " + bookId + " not found.");
 
         List<Review> reviews;
@@ -75,32 +75,32 @@ public class ReviewService {
             Pageable pageable = (sort == null)
                     ? PageRequest.of(page, size)
                     : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-            reviews = reviewRepository.findReviewsByBookId(bookId, pageable).toList();
+            reviews = reviewRepository.findReviewsByBookId(bookId, pageable).stream().collect(Collectors.toList());
         }
-        return reviews.stream().map(reviewDTOMapper).toList();
+        return reviews.stream().map(reviewResponseMapper).toList();
     }
 
-    public ReviewDTO getOneReview(Long reviewId) {
-        return reviewRepository.findById(reviewId).map(reviewDTOMapper)
+    public ReviewResponse getOneReview(Long reviewId) {
+        return reviewRepository.findById(reviewId).map(reviewResponseMapper)
                 .orElseThrow(() -> new ReviewService404Exception("Review with given Id " + reviewId + " not found."));
     }
 
-    public ReviewDTO getOneReview(Long bookId, Long reviewId) {
+    public ReviewResponse getOneReview(Long bookId, Long reviewId) {
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new ReviewService404Exception("Book with given Id " + bookId + " not found."));
         return book.getReviews().stream().filter(review -> Objects.equals(review.getId(), reviewId))
                 .findFirst()
-                .map(reviewDTOMapper)
+                .map(reviewResponseMapper)
                 .orElseThrow(() -> new ReviewService404Exception("Review with given Id " + reviewId + " not found in book with Id " + bookId + "."));
     }
 
-    public ReviewDTO updateOneReview(Long reviewId, ReviewRequest reviewRequest) {
+    public ReviewResponse updateOneReview(Long reviewId, ReviewRequest reviewRequest) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewService404Exception("Review with given Id " + reviewId + " not found."));
 
         review.setTitle(reviewRequest.title());
         review.setBody(reviewRequest.body());
         review.setRating(reviewRequest.rating());
-        return reviewDTOMapper.apply(reviewRepository.save(review));
+        return reviewResponseMapper.apply(reviewRepository.save(review));
     }
 
     public void deleteOneReview(Long reviewId) {
