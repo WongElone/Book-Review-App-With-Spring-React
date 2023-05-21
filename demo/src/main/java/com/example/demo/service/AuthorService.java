@@ -8,17 +8,26 @@ import com.example.demo.model.Author;
 import com.example.demo.model.Book;
 import com.example.demo.repository.AuthorRepository;
 import com.example.demo.repository.BookRepository;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthorService {
 
     @Autowired
@@ -27,7 +36,7 @@ public class AuthorService {
     private AuthorResponseMapper authorResponseMapper;
     @Autowired
     private BookRepository bookRepository;
-    public AuthorResponse saveAuthor(AuthorRequest authorRequest) {
+    public AuthorResponse addOneAuthor(AuthorRequest authorRequest) {
         List<Long> bookIds = (authorRequest.bookIds() != null) ? authorRequest.bookIds() : new ArrayList<>();
         Author author = new Author(
                 authorRequest.fullName(),
@@ -41,24 +50,14 @@ public class AuthorService {
         return authorResponseMapper.apply(authorRepository.save(author));
     }
 
-    public List<AuthorResponse> getAllAuthors() {
-        return authorRepository.findAll().stream().map(authorResponseMapper).collect(Collectors.toList());
-    }
-
-    public List<AuthorResponse> getAllAuthors(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return authorRepository.findAll(pageable).stream().map(authorResponseMapper).collect(Collectors.toList());
-    }
-
-    public List<AuthorResponse> getAllAuthors(String sort, Boolean desc) {
-        Sort sortable = Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
-        return authorRepository.findAll(sortable).stream().map(authorResponseMapper).collect(Collectors.toList());
-    }
-
-    public List<AuthorResponse> getAllAuthors(Integer page, Integer size, String sort, Boolean desc) {
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-        return authorRepository.findAll(pageable).stream().map(authorResponseMapper).collect(Collectors.toList());
+    public Page<AuthorResponse> getAllAuthors(@Min(0) Integer page,
+                                              @Max(100) @Min(1) Integer size,
+                                              String sort,
+                                              Boolean desc) {
+        Pageable pageable = (sort == null)
+                ? PageRequest.of(page, size)
+                : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+        return authorRepository.findAll(pageable).map(authorResponseMapper);
     }
 
     public AuthorResponse getOneAuthor(Long authorId) {

@@ -2,15 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.AuthorRequest;
 import com.example.demo.dto.AuthorResponse;
-import com.example.demo.model.Author;
 import com.example.demo.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/authors")
@@ -21,23 +20,14 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<AuthorResponse> addOneAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
-        return new ResponseEntity<>(authorService.saveAuthor(authorRequest), HttpStatus.OK);
+        return new ResponseEntity<>(authorService.addOneAuthor(authorRequest), HttpStatus.OK);
     }
 
     @GetMapping
-    public List<AuthorResponse> getAllAuthors(@RequestParam(required = false) Integer page,
-                                         @RequestParam(required = false) Integer size,
-                                         @RequestParam(required = false) String sort,
-                                         @RequestParam(defaultValue = "false") Boolean desc) {
-        if (page == null || size == null) {
-            if (sort == null) {
-                return authorService.getAllAuthors();
-            } else {
-                return authorService.getAllAuthors(sort, desc);
-            }
-        } else if (sort == null) {
-            return authorService.getAllAuthors(page, size);
-        }
+    public Page<AuthorResponse> getAllAuthors(@RequestParam(defaultValue = "0") Integer page,
+                                              @RequestParam(defaultValue = "6")Integer size,
+                                              @RequestParam(required = false) String sort,
+                                              @RequestParam(defaultValue = "false") Boolean desc) {
         return authorService.getAllAuthors(page, size, sort, desc);
     }
 

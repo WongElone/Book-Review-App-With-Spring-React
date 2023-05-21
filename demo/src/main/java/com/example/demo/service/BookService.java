@@ -9,17 +9,23 @@ import com.example.demo.model.Author;
 import com.example.demo.model.Book;
 import com.example.demo.repository.AuthorRepository;
 import com.example.demo.repository.BookRepository;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class BookService {
 
     @Autowired
@@ -43,35 +49,14 @@ public class BookService {
         return bookResponseMapper.apply(bookRepository.save(book));
     }
 
-    public List<BookResponse> getAllBooks() {
-        return bookRepository.findAll()
-                .stream()
-                .map(bookResponseMapper)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookResponse> getAllBooks(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return bookRepository.findAll(pageable)
-                .stream()
-                .map(bookResponseMapper)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookResponse> getAllBooks(String sort, Boolean desc) {
-        Sort sortable = Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
-        return bookRepository.findAll(sortable)
-                .stream()
-                .map(bookResponseMapper)
-                .collect(Collectors.toList());
-    }
-
-    public List<BookResponse> getAllBooks(Integer page, Integer size, String sort, Boolean desc) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-        return bookRepository.findAll()
-                .stream()
-                .map(bookResponseMapper)
-                .collect(Collectors.toList());
+    public Page<BookResponse> getAllBooks(@Min(0) @NotNull Integer page,
+                                          @Max(100) @Min(1) @NotNull Integer size,
+                                          String sort,
+                                          Boolean desc) {
+            Pageable pageable = (sort == null)
+                    ? PageRequest.of(page, size)
+                    : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+            return bookRepository.findAll(pageable).map(bookResponseMapper);
     }
     public BookResponse getOneBook(Long bookId) throws BookService404Exception {
         return bookRepository.findById(bookId)

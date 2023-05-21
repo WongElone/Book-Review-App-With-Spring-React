@@ -9,11 +9,11 @@ import com.example.demo.service.BookService;
 import com.example.demo.service.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -31,19 +31,10 @@ public class BookController {
     }
 
     @GetMapping
-    public List<BookResponse> getAllBooks(@RequestParam(required = false) Integer page,
-                                          @RequestParam(required = false) Integer size,
+    public Page<BookResponse> getAllBooks(@RequestParam(defaultValue = "0") Integer page,
+                                          @RequestParam(defaultValue = "6") Integer size,
                                           @RequestParam(required = false) String sort,
                                           @RequestParam(defaultValue = "false") Boolean desc) {
-        if (page == null || size == null) {
-            if (sort == null) {
-                return bookService.getAllBooks();
-            } else {
-                return bookService.getAllBooks(sort, desc);
-            }
-        } else if (sort == null) {
-            return bookService.getAllBooks(page, size);
-        }
         return bookService.getAllBooks(page, size, sort, desc);
     }
 
@@ -71,9 +62,9 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/reviews")
-    public List<ReviewResponse> getAllReviewsOfBook(@PathVariable Long bookId,
-                                                    @RequestParam(required = false) Integer page,
-                                                    @RequestParam(required = false) Integer size,
+    public Page<ReviewResponse> getAllReviewsOfBook(@PathVariable Long bookId,
+                                                    @RequestParam(defaultValue = "0") Integer page,
+                                                    @RequestParam(defaultValue = "6") Integer size,
                                                     @RequestParam(required = false) String sort,
                                                     @RequestParam(defaultValue = "false") Boolean desc) {
         return reviewService.getAllReviews(bookId, page, size, sort, desc);

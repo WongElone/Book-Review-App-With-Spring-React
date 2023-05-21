@@ -8,17 +8,20 @@ import com.example.demo.model.Book;
 import com.example.demo.model.Review;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.repository.ReviewRepository;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class ReviewService {
 
     @Autowired
@@ -40,44 +43,27 @@ public class ReviewService {
         return reviewResponseMapper.apply(reviewRepository.save(review));
     }
 
-    public List<ReviewResponse> getAllReviews(Integer page, Integer size, String sort, Boolean desc) {
-        List<Review> reviews;
-        if (page == null || size == null) {
-            if (sort == null) {
-                reviews = reviewRepository.findAll();
-            } else {
-                reviews = reviewRepository.findAll(
-                        Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort)
-                );
-            }
-        } else {
-            Pageable pageable = (sort == null)
-                    ? PageRequest.of(page, size)
-                    : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-            reviews = reviewRepository.findAll(pageable).stream().collect(Collectors.toList());
-        }
-        return reviews.stream().map(reviewResponseMapper).collect(Collectors.toList());
+    public Page<ReviewResponse> getAllReviews(@Min(0) Integer page,
+                                              @Max(6) @Min(1) Integer size,
+                                              String sort,
+                                              Boolean desc) {
+        Pageable pageable = (sort == null)
+                ? PageRequest.of(page, size)
+                : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+        return reviewRepository.findAll(pageable).map(reviewResponseMapper);
     }
 
-    public List<ReviewResponse> getAllReviews(Long bookId, Integer page, Integer size, String sort, Boolean desc) {
+    public Page<ReviewResponse> getAllReviews(Long bookId,
+                                              @Min(0) Integer page,
+                                              @Max(6) @Min(1) Integer size,
+                                              String sort,
+                                              Boolean desc) {
         if (!bookRepository.existsById(bookId)) throw new ReviewService404Exception("Book with given Id " + bookId + " not found.");
 
-        List<Review> reviews;
-        if (page == null || size == null) {
-            if (sort == null) {
-                reviews = reviewRepository.findReviewsByBookId(bookId);
-            } else {
-                reviews = reviewRepository.findReviewsByBookId(bookId,
-                        Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort)
-                );
-            }
-        } else {
-            Pageable pageable = (sort == null)
-                    ? PageRequest.of(page, size)
-                    : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
-            reviews = reviewRepository.findReviewsByBookId(bookId, pageable).stream().collect(Collectors.toList());
-        }
-        return reviews.stream().map(reviewResponseMapper).toList();
+        Pageable pageable = (sort == null)
+                ? PageRequest.of(page, size)
+                : PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sort));
+        return reviewRepository.findReviewsByBookId(bookId, pageable).map(reviewResponseMapper);
     }
 
     public ReviewResponse getOneReview(Long reviewId) {

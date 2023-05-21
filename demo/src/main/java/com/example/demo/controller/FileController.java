@@ -5,7 +5,6 @@ import com.example.demo.dto.UploadFileResponse;
 import com.example.demo.property.FileStorageProperties;
 import com.example.demo.service.FileStorageService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +17,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 
