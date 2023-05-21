@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.exception.FileResourceNotFoundException;
 import com.example.demo.exception.FileStorageException;
 import com.example.demo.property.FileStorageProperties;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -38,6 +39,7 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file, String folderName) {
         // normalize file name
+        System.out.println("file is empty: " + file.isEmpty());
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         try {
@@ -45,7 +47,6 @@ public class FileStorageService {
             if (fileName.contains("..")) {
                 throw new FileStorageException("Filename contains invalid path sequence: " + fileName);
             }
-            System.out.println("before set target location");
             Path targetFolderLocation = this.fileStorageLocation.resolve(folderName);
 
             // create directory (/uploads/{folderName}) in designated location in case not exists

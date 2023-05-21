@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FileValidator.class)
 public @interface ValidFile {
-    String message() default "Only PDF,XML,PNG or JPG images are allowed";
+    String message() default "Only non-empty PDF,XML,PNG or JPG images are allowed";
 
     Class<?>[] groups() default {};
 

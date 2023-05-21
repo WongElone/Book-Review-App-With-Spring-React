@@ -1,19 +1,19 @@
 package com.example.demo.model;
 
+import com.example.demo.annotation.CurrentYearOrLess;
 import com.example.demo.auditable.BookAuditable;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Year;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table
@@ -51,7 +51,6 @@ public class Book extends BookAuditable {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-//    @JsonBackReference
     private List<Author> authors;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
@@ -59,12 +58,18 @@ public class Book extends BookAuditable {
 
     private String coverImageRelativeUri;
 
+
+    @CurrentYearOrLess
+    @Min(0)
+    private Integer firstPublicationYear;
+
     public Book() {}
 
-    public Book(String title, String description, List<Author> authors, String coverImageRelativeUri) {
+    public Book(String title, String description, List<Author> authors, String coverImageRelativeUri, Integer firstPublicationYear) {
         this.title = title;
         this.description = description;
         this.authors = authors;
         this.coverImageRelativeUri = coverImageRelativeUri;
+        this.firstPublicationYear = firstPublicationYear;
     }
 }

@@ -11,6 +11,7 @@ public record BookResponse(
     String description,
     List<SimpleAuthor> authors,
     List<Review> reviews,
-    String coverImageRelativeUri
+    String coverImageRelativeUri,
+    Integer firstPublicationYear
 ) {}
 

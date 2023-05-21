@@ -18,7 +18,8 @@ public class BookResponseMapper implements Function<Book, BookResponse> {
                         .map(author -> new SimpleAuthor(author.getId(), author.getFullName()))
                         .collect(Collectors.toList()),
                 book.getReviews(),
-                book.getCoverImageRelativeUri()
+                book.getCoverImageRelativeUri(),
+                book.getFirstPublicationYear()
         );
     }
 }

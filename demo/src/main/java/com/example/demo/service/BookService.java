@@ -44,7 +44,8 @@ public class BookService {
                             .findById(authorId)
                             .orElseThrow(() -> new BookService404Exception("Author with given id " + authorId + " not found."))
                 ).collect(Collectors.toList()),
-                bookRequest.coverImageRelativeUri()
+                bookRequest.coverImageRelativeUri(),
+                bookRequest.firstPublicationYear()
         );
         return bookResponseMapper.apply(bookRepository.save(book));
     }
@@ -78,6 +79,7 @@ public class BookService {
         book.setDescription(bookRequest.description());
         book.setAuthors(authors);
         book.setCoverImageRelativeUri(bookRequest.coverImageRelativeUri());
+        book.setFirstPublicationYear(bookRequest.firstPublicationYear());
         return bookResponseMapper.apply(bookRepository.save(book));
     }
 

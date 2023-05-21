@@ -13,5 +13,6 @@ public record BookRequest (
         String description,
         @JsonProperty("authors")
         List<Long> authorIds,
-        String coverImageRelativeUri
+        String coverImageRelativeUri,
+        Integer firstPublicationYear
 ) {}

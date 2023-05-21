@@ -5,7 +5,9 @@ import com.example.demo.dto.UploadFileResponse;
 import com.example.demo.property.FileStorageProperties;
 import com.example.demo.service.FileStorageService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class FileController {
     private FileStorageProperties fileStorageProperties;
     @PostMapping("/uploadFile/{folderName}")
     public UploadFileResponse uploadFile(@PathVariable @Pattern(regexp = "^[A-Za-z0-9]+$") String folderName,
-                                         @RequestPart @ValidFile MultipartFile file
+                                         @RequestPart @NotNull @ValidFile MultipartFile file
     ) throws MethodArgumentNotValidException {
         String fileName = fileStorageService.storeFile(file, folderName);
 
@@ -72,7 +74,7 @@ public class FileController {
 
     @PostMapping("/uploadMultipleFiles/{folderName}")
     public List<UploadFileResponse> uploadMultipleFiles(@PathVariable @Pattern(regexp = "^[A-Za-z0-9]+$") String folderName,
-                                                        @RequestPart List<MultipartFile> files
+                                                        @RequestPart @Size(max = 3) List<MultipartFile> files
     ) throws MethodArgumentNotValidException {
         return files.stream()
                 .map(file -> {
