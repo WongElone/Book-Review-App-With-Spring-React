@@ -7,22 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.time.Year;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-@Getter
-@Setter
-@EqualsAndHashCode
 public class Book extends BookAuditable {
 
     @Id
@@ -71,5 +64,74 @@ public class Book extends BookAuditable {
         this.authors = authors;
         this.coverImageRelativeUri = coverImageRelativeUri;
         this.firstPublicationYear = firstPublicationYear;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public String getCoverImageRelativeUri() {
+        return coverImageRelativeUri;
+    }
+
+    public void setCoverImageRelativeUri(String coverImageRelativeUri) {
+        this.coverImageRelativeUri = coverImageRelativeUri;
+    }
+
+    public Integer getFirstPublicationYear() {
+        return firstPublicationYear;
+    }
+
+    public void setFirstPublicationYear(Integer firstPublicationYear) {
+        this.firstPublicationYear = firstPublicationYear;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id.equals(book.id) && title.equals(book.title) && Objects.equals(description, book.description) && Objects.equals(authors, book.authors) && Objects.equals(reviews, book.reviews) && Objects.equals(coverImageRelativeUri, book.coverImageRelativeUri) && Objects.equals(firstPublicationYear, book.firstPublicationYear);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, authors, reviews, coverImageRelativeUri, firstPublicationYear);
     }
 }
