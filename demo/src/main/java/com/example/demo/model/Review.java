@@ -32,6 +32,7 @@ public class Review extends ReviewAuditable {
 
     @NotBlank
     @Lob
+    @Size(max = 10000)
     private String body;
 
     @NotNull

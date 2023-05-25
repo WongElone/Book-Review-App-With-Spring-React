@@ -9,5 +9,5 @@ public record ReviewResponse(
         String title,
         String body,
         Integer rating,
-        Instant createdDate
+        Instant createdAt
 ) {}

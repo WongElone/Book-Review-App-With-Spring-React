@@ -20,7 +20,7 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<AuthorResponse> addOneAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
-        return new ResponseEntity<>(authorService.addOneAuthor(authorRequest), HttpStatus.OK);
+        return new ResponseEntity<>(authorService.addOneAuthor(authorRequest), HttpStatus.CREATED);
     }
 
     @GetMapping

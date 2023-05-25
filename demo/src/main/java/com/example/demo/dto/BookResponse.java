@@ -1,8 +1,8 @@
 package com.example.demo.dto;
 
 
-import com.example.demo.model.Review;
 
+import java.time.Instant;
 import java.util.List;
 
 public record BookResponse(
@@ -10,8 +10,9 @@ public record BookResponse(
     String title,
     String description,
     List<SimpleAuthor> authors,
-    List<Review> reviews,
+    List<SimpleReview> reviews,
     String coverImageRelativeUri,
-    Integer firstPublicationYear
+    Integer firstPublicationYear,
+    Instant updatedAt
 ) {}
 
