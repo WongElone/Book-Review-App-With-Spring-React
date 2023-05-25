@@ -1,4 +1,4 @@
-# A Book Review Application (Spring Book, React)
+# A Book Review Application (Spring Boot, React)
 ## ✨API is open for test now✨
 Base URL of API for testing: http://demo-spring-boot-book-review-api.elonewong.com/api/v1  
 📄 Read the API endpoints documentation here: 

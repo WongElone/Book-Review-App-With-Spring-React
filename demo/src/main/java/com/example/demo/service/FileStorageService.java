@@ -39,7 +39,6 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file, String folderName) {
         // normalize file name
-        System.out.println("file is empty: " + file.isEmpty());
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         try {
