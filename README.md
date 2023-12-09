@@ -1,6 +1,6 @@
 # A Book Review Application (Spring Boot, React)
 ## ✨API is open for test now✨
-Base URL of API for testing: http://18.141.190.58:1230/api/v1  
+Base URL of API for testing: http://18.141.190.58:1231/api/v1  
 📄 Read the API endpoints documentation here: https://docs.google.com/document/d/1OAV6kR1IyLsxU_fUQnlyweTSGMVfQt-iqZMMHYPq_0U/edit?usp=sharing  
 
 ## Progress of Development
