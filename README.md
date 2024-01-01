@@ -1,6 +1,6 @@
 # A Book Review Application (Spring Boot, React)
 ## ✨API is NOT open for test now✨
-Base URL of API for testing: ~~https://demo-book-review-api.elonewong.com/api/v1~~  
+Base URL of API for testing: https://demo-book-review-api.elonewong.com/api/v1  
 📄 Read the API endpoints documentation here: https://docs.google.com/document/d/1OAV6kR1IyLsxU_fUQnlyweTSGMVfQt-iqZMMHYPq_0U/edit?usp=sharing  
 
 ## Progress of Development
